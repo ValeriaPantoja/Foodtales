@@ -221,7 +221,7 @@
                 document.getElementById('compareContent').innerHTML = `
                     <div class="no-compare">
                         <p>❌ No se encontraron uno o ambos platos para comparar.</p>
-                        <button class="btn-primary" onclick="window.location.href='home.html'">Volver al home</button>
+                        <button class="btn-primary" onclick="window.location.href='pages/home.html'">Volver al home</button>
                     </div>
                 `;
             }
@@ -229,23 +229,23 @@
             document.getElementById('compareContent').innerHTML = `
                 <div class="no-compare">
                     <p>😢 No hay platos seleccionados para comparar.</p>
-                    <button class="btn-primary" onclick="window.location.href='home.html'">Explorar platos</button>
+                    <button class="btn-primary" onclick="window.location.href='pages/home.html'">Explorar platos</button>
                 </div>
             `;
         }
         
         // ----- NAVEGACIÓN -----
         document.getElementById('backBtn').addEventListener('click', () => {
-            window.location.href = 'home.html';
+            window.location.href = 'pages/home.html';
         });
         
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const page = btn.getAttribute('data-page');
-                if (page === 'home') window.location.href = 'pag_inicial.html';
-                else if (page === 'map') window.location.href = 'map.html';
-                else if (page === 'favorites') window.location.href = 'favorites.html';
-                else if (page === 'profile') window.location.href = 'perfil.html';
+                if (page === 'home') window.location.href = 'index.html';
+                else if (page === 'map') window.location.href = 'pages/map.html';
+                else if (page === 'favorites') window.location.href = 'pages/favorites.html';
+                else if (page === 'profile') window.location.href = 'pages/perfil.html';
             });
         });
     </script>

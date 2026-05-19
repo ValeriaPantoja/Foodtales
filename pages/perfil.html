@@ -506,10 +506,10 @@
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const page = btn.getAttribute('data-page');
-                if (page === 'home') window.location.href = 'pag_inicial.html';
-                else if (page === 'map') window.location.href = 'map.html';
-                else if (page === 'profile') window.location.href = 'perfil.html';
-                else if (page === 'favorites') window.location.href = 'favorites.html';
+                if (page === 'home') window.location.href = 'index.html';
+                else if (page === 'map') window.location.href = 'pages/map.html';
+                else if (page === 'profile') window.location.href = 'pages/perfil.html';
+                else if (page === 'favorites') window.location.href = 'pages/favorites.html';
             });
         });
 
@@ -517,7 +517,7 @@
         // ----- CERRAR SESIÓN -----
 document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('foodtales_current_user');
-    window.location.href = 'inext.html';
+    window.location.href = 'pages/inext.html';
 });
     </script>
 </body>

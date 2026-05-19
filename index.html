@@ -212,6 +212,14 @@ function applyLanguageHome(lang) {
 
 // Llamar la función al cargar
 loadUserLanguage();
+
+    // Verificar sesión
+    const currentUser = JSON.parse(localStorage.getItem('foodtales_current_user'));
+
+    // Si no hay sesión, mandar al login
+    if (!currentUser) {
+        window.location.href = 'pages/inext.html';
+    }
     </script>
 </body>
 </html>

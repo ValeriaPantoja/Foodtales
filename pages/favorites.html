@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FoodTales - Mis favoritos</title>
+    <link rel="stylesheet" href="../css/favorites.css">
+</head>
+<body class="dark">
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>🍜 FoodTales</h1>
+            </div>
+            <div class="action-buttons">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <button class="back-btn" id="backBtn">← Volver</button>
+            </div>
+        </div>
+
+        <div class="favorites-header">
+            <div class="favorites-title">❤️ MIS FAVORITOS</div>
+            <p>Los platos que guardaste para más tarde</p>
+        </div>
+
+        <div id="favoritesContent">
+            <div style="text-align: center; padding: 3rem;">Cargando...</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item" data-page="home">🏠</button>
+        <button class="nav-item" data-page="map">📍</button>
+        <button class="nav-item active" data-page="favorites">❤️</button>
+        <button class="nav-item" data-page="profile">👤</button>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script>
+        // ----- TEMA OSCURO/CLARO -----
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('foodtales_theme');
+            if (savedTheme === 'light') {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeToggle.textContent = '🌙';
+            }
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                localStorage.setItem('foodtales_theme', 'light');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                localStorage.setItem('foodtales_theme', 'dark');
+                themeToggle.textContent = '🌙';
+            }
+        });
+        
+        loadTheme();
+        
+        // ----- OBTENER FAVORITOS -----
+        const platosData = getPlatos();
+        
+        function getFavoritosPlatos() {
+            const favoritosIds = getFavoritos();
+            return platosData.filter(plato => favoritosIds.includes(plato.id));
+        }
+        
+        function verDetalle(id) {
+            window.location.href = `dish-detail.html?id=${id}`;
+        }
+        
+        function renderFavoritos() {
+            const favoritos = getFavoritosPlatos();
+            const container = document.getElementById('favoritesContent');
+            
+            if (favoritos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="emoji">💔</div>
+                        <h3>No tienes favoritos aún</h3>
+                        <p>Explora platos y guarda tus favoritos tocando el corazón ❤️</p>
+                        <button class="btn-primary" onclick="window.location.href='home.html'">Explorar platos →</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="platos-grid">
+                    ${favoritos.map(plato => `
+                        <div class="plato-card" data-id="${plato.id}">
+                            <img class="plato-img" src="${plato.imagen}" alt="${plato.nombre}" onerror="this.src='https://placehold.co/400x200?text=${plato.nombre}'">
+                            <div class="plato-info">
+                                <div class="plato-nombre">${plato.nombre}</div>
+                                <div class="plato-restaurante">🏠 ${plato.restaurante}</div>
+                                <div class="plato-stars">${'⭐'.repeat(Math.floor(plato.estrellas))} ${plato.estrellas}</div>
+                                <div class="plato-details">
+                                    <span>📏 ${plato.distancia} km (${plato.tiempoCaminando} min)</span>
+                                    <span>💰 $${plato.precio.toLocaleString()}</span>
+                                </div>
+                                <div class="plato-actions">
+                                    <button class="favorite-btn" data-id="${plato.id}">❤️</button>
+                                    <button class="btn-secondary" onclick="verDetalle('${plato.id}')">Ver más →</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Eventos para quitar favoritos
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    removeFavorito(id);
+                    renderFavoritos(); // re-renderizar
+                });
+            });
+            
+            // Click en toda la tarjeta para ver detalle
+            document.querySelectorAll('.plato-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('favorite-btn') || e.target.classList.contains('btn-secondary')) return;
+                    const id = card.getAttribute('data-id');
+                    if (id) verDetalle(id);
+                });
+            });
+        }
+        
+        renderFavoritos();
+        
+        // ----- NAVEGACIÓN -----
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'home.html';
+        });
+        
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.getAttribute('data-page');
+                if (page === 'home') window.location.href = 'pag_inicial.html';
+                else if (page === 'map') window.location.href = 'map.html';
+                else if (page === 'favorites') window.location.href = 'favorites.html';
+                else if (page === 'profile') window.location.href = 'perfil.html';
+            });
+        });
+    // ----- TRADUCCIÓN PARA FAVORITOS -----
+function translateFavorites() {
+    const currentUser = JSON.parse(localStorage.getItem('foodtales_current_user'));
+    if (!currentUser) return;
+    
+    const users = JSON.parse(localStorage.getItem('foodtales_users')) || [];
+    const user = users.find(u => u.email === currentUser.email);
+    const lang = user?.profileData?.languagePref || 'español';
+    
+    const texts = {
+        español: {
+            title: "❤️ MIS FAVORITOS",
+            subtitle: "Los platos que guardaste para más tarde",
+            emptyTitle: "No tienes favoritos aún",
+            emptyText: "Explora platos y guarda tus favoritos tocando el corazón ❤️",
+            emptyBtn: "Explorar platos →",
+            viewMore: "Ver más →"
+        },
+        inglés: {
+            title: "❤️ MY FAVORITES",
+            subtitle: "The dishes you saved for later",
+            emptyTitle: "You don't have favorites yet",
+            emptyText: "Explore dishes and save your favorites by tapping the heart ❤️",
+            emptyBtn: "Explore dishes →",
+            viewMore: "View more →"
+        }
+    };
+    
+    const t = texts[lang];
+    if (!t) return;
+    
+    // Traducir títulos principales
+    const titleEl = document.querySelector('.favorites-title');
+    if (titleEl) titleEl.textContent = t.title;
+    
+    const subtitleEl = document.querySelector('.favorites-header p');
+    if (subtitleEl) subtitleEl.textContent = t.subtitle;
+    
+    // Si está vacío, traducir el mensaje de empty state
+    const emptyTitle = document.querySelector('.empty-state h3');
+    if (emptyTitle) emptyTitle.textContent = t.emptyTitle;
+    
+    const emptyText = document.querySelector('.empty-state p');
+    if (emptyText) emptyText.textContent = t.emptyText;
+    
+    const emptyBtn = document.querySelector('.empty-state .btn-primary');
+    if (emptyBtn) emptyBtn.textContent = t.emptyBtn;
+    
+    // Traducir botones "Ver más" de cada tarjeta (si ya hay favoritos)
+    const viewButtons = document.querySelectorAll('.btn-secondary');
+    viewButtons.forEach(btn => {
+        btn.textContent = t.viewMore;
+    });
+}
+
+// Modificar renderFavoritos para que aplique idioma después de renderizar
+const originalRender = renderFavoritos;
+renderFavoritos = function() {
+    originalRender();
+    setTimeout(translateFavorites, 50);
+};
+
+// Ejecutar traducción también al cargar por si ya había favoritos
+setTimeout(translateFavorites, 100);
+    </script>
+</body>
+</html>

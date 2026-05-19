@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FoodTales - Detalle del plato</title>
+    <link rel="stylesheet" href="../css/dish-detail.css">
+</head>
+<body class="dark">
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>🍜 FoodTales</h1>
+            </div>
+            <div class="action-buttons">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <button class="back-btn" id="backBtn">← Volver</button>
+            </div>
+        </div>
+
+        <div id="dishContent">
+            <!-- El contenido se carga dinámicamente -->
+            <div style="text-align: center; padding: 3rem;">Cargando...</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item" data-page="home">🏠</button>
+        <button class="nav-item" data-page="map">📍</button>
+        <button class="nav-item" data-page="favorites">❤️</button>
+        <button class="nav-item" data-page="profile">👤</button>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script>
+        // ----- TEMA OSCURO/CLARO -----
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('foodtales_theme');
+            if (savedTheme === 'light') {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeToggle.textContent = '🌙';
+            }
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                localStorage.setItem('foodtales_theme', 'light');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                localStorage.setItem('foodtales_theme', 'dark');
+                themeToggle.textContent = '🌙';
+            }
+        });
+        
+        loadTheme();
+        
+        // ----- OBTENER ID DEL PLATO DESDE URL -----
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+        
+        const platoId = getQueryParam('id');
+        const platosData = getPlatos();
+        const plato = platosData.find(p => p.id === platoId);
+
+        function normalizeText(text) {
+            return text ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+        }
+
+        function getCurrentUserAllergies() {
+            const currentUser = JSON.parse(localStorage.getItem('foodtales_current_user'));
+            if (!currentUser) return [];
+            const users = JSON.parse(localStorage.getItem('foodtales_users')) || [];
+            const user = users.find(u => u.email === currentUser.email);
+            return (user?.profileData?.alergias || []).map(normalizeText).filter(Boolean);
+        }
+
+        function getDishAllergyWarning(plato) {
+            const allergies = getCurrentUserAllergies();
+            if (!allergies.length) return '';
+
+            const ingredients = (plato.ingredientes || []).map(normalizeText);
+            const name = normalizeText(plato.nombre);
+            const found = allergies.filter(allergy => {
+                return ingredients.some(ing => ing.includes(allergy)) || name.includes(allergy);
+            });
+
+            if (found.length) {
+                const uniqueAllergies = [...new Set(found)].join(', ');
+                return `Cuidado: puede contener ${uniqueAllergies}.`;
+            }
+            return '';
+        }
+
+        function checkDishAllergies(plato) {
+            const warning = getDishAllergyWarning(plato);
+            if (!warning) return false;
+            alert(`Cuidado: este plato contiene ingredientes relacionados con tu alergia a ${warning.replace('Cuidado: puede contener ', '')}`);
+            return true;
+        }
+
+        if (!plato) {
+            document.getElementById('dishContent').innerHTML = '<div style="text-align: center; padding: 3rem;">🍽️ Plato no encontrado<br><button class="map-btn" onclick="window.location.href=\'home.html\'">Volver al inicio</button></div>';
+        } else {
+            checkDishAllergies(plato);
+        }
+        
+        // ----- RENDERIZAR DETALLE -----
+        function renderDetalle() {
+            const favoritoActual = isFavorito(plato.id);
+            
+            const html = `
+                <img class="main-img" src="${plato.imagen}" alt="${plato.nombre}" onerror="this.src='https://placehold.co/600x300?text=${plato.nombre}'">
+                
+                <div class="title-section">
+                    <h2>${plato.nombre}</h2>
+                    <div class="stars">${'⭐'.repeat(Math.floor(plato.estrellas))} ${plato.estrellas}</div>
+                </div>
+                ${getDishAllergyWarning(plato) ? `<div class="allergy-warning" style="color: #b71c1c; font-weight: 700; margin-bottom: 14px;">⚠️ ${getDishAllergyWarning(plato)}</div>` : ''}
+                <div class="restaurante">🏠 ${plato.restaurante}</div>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="emoji">📏</div>
+                        <div class="label">Distancia</div>
+                        <div class="value">${plato.distancia} km</div>
+                        <div class="label">🚶 ${plato.tiempoCaminando} min caminando</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="emoji">💰</div>
+                        <div class="label">Precio</div>
+                        <div class="value">$${plato.precio.toLocaleString()} ${plato.moneda}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="emoji">⏱️</div>
+                        <div class="label">Preparación</div>
+                        <div class="value">${plato.tiempoPreparacion} min</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="emoji">🧂</div>
+                        <div class="label">Sabor</div>
+                        <div class="value">${plato.sabor <= 3 ? 'Salado' : plato.sabor >= 7 ? 'Dulce' : 'Equilibrado'}</div>
+                    </div>
+                </div>
+                
+                <!-- Restaurante y mapa -->
+                <div class="section">
+                    <h3>📍 Restaurante</h3>
+                    <p><strong>${plato.restaurante}</strong><br>${plato.direccion}</p>
+                    <div class="map-placeholder">
+                        <span>🗺️ Mapa interactivo</span>
+                        <button class="map-btn" id="openMapsBtn">Abrir en Google Maps →</button>
+                        <small>${plato.distancia} km de distancia (${plato.tiempoCaminando} min a pie)</small>
+                    </div>
+                    <div class="info-card" style="margin-top: 10px;">
+                        <div class="emoji">🕒</div>
+                        <div class="label">Horario de atención</div>
+                        <div class="value">${plato.horarios}</div>
+                    </div>
+                </div>
+                
+                <!-- Historia y video -->
+                <div class="section">
+                    <h3>📖 Historia del plato</h3>
+                    <p>${plato.historia}</p>
+                    ${plato.videoUrl ? `
+                        <div class="video-container">
+                            <iframe src="${plato.videoUrl}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    ` : '<small>🎥 Video no disponible</small>'}
+                </div>
+                
+                <!-- Ingredientes -->
+                <div class="section">
+                    <h3>🥘 Ingredientes</h3>
+                    <div class="ingredientes-list">
+                        ${plato.ingredientes.map(ing => `<span class="ingrediente-chip">${ing}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <!-- Datos curiosos -->
+                <div class="section">
+                    <h3>✨ Datos curiosos</h3>
+                    <ul class="curiosidades">
+                        ${plato.datosCuriosos.map(dato => `<li>📌 ${dato}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <!-- Reviews -->
+                <div class="section">
+                    <h3>💬 Lo que opinan los comensales</h3>
+                    ${plato.reviews.map(review => `
+                        <div class="review">
+                            <div class="review-header">
+                                <span>${review.usuario}</span>
+                                <span class="review-stars">${'⭐'.repeat(review.estrellas)} ${review.estrellas}</span>
+                            </div>
+                            <div class="review-text">"${review.comentario}"</div>
+                            <div class="review-date">📅 ${review.fecha}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="action-buttons-bottom">
+                    <button class="btn-action btn-favorite" id="favoriteBtn">
+                        ${favoritoActual ? '❤️  Quitar de favoritos' : '🤍 Guardar para más tarde'}
+                    </button>
+                    <button class="btn-action btn-compare" id="compareBtn">
+                        📊 Comparar con otro
+                    </button>
+                    <button class="btn-action btn-directions" id="directionsBtn">
+                        🗺️ Iniciar ruta
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('dishContent').innerHTML = html;
+            
+            // Eventos dinámicos
+            document.getElementById('openMapsBtn')?.addEventListener('click', () => {
+                const url = `https://www.google.com/maps/search/?api=1&query=${plato.lat},${plato.lng}`;
+                window.open(url, '_blank');
+            });
+            
+            document.getElementById('directionsBtn')?.addEventListener('click', () => {
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${plato.lat},${plato.lng}`;
+                window.open(url, '_blank');
+            });
+            
+            document.getElementById('favoriteBtn')?.addEventListener('click', () => {
+                if (isFavorito(plato.id)) {
+                    removeFavorito(plato.id);
+                    document.getElementById('favoriteBtn').innerHTML = '🤍 Guardar para más tarde';
+                } else {
+                    addFavorito(plato.id);
+                    document.getElementById('favoriteBtn').innerHTML = '❤️ Quitar de favoritos';
+                }
+            });
+            
+            document.getElementById('compareBtn')?.addEventListener('click', () => {
+                checkDishAllergies(plato);
+                // Guardar este plato en localStorage y redirigir a home para elegir segundo
+                localStorage.setItem('foodtales_temp_compare', plato.id);
+                window.location.href = 'home.html?selectCompare=true';
+            });
+        }
+        
+        if (plato) renderDetalle();
+        
+        // ----- NAVEGACIÓN -----
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'home.html';
+        });
+        
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.getAttribute('data-page');
+                if (page === 'home') window.location.href = 'pag_inicial.html';
+                else if (page === 'map') window.location.href = 'map.html';
+                else if (page === 'favorites') window.location.href = 'favorites.html';
+                else if (page === 'profile') window.location.href = 'perfil.html';
+            });
+        });
+// ----- TRADUCCIÓN PARA DETALLE (versión simple que no rompe nada) -----
+let detailLanguage = 'español';
+
+function loadAndTranslateDetail() {
+    const currentUser = JSON.parse(localStorage.getItem('foodtales_current_user'));
+    if (!currentUser) return;
+    
+    const users = JSON.parse(localStorage.getItem('foodtales_users')) || [];
+    const user = users.find(u => u.email === currentUser.email);
+    
+    if (user && user.profileData && user.profileData.languagePref) {
+        detailLanguage = user.profileData.languagePref;
+        translateDetailPage();
+    }
+}
+
+function translateDetailPage() {
+    const texts = {
+        español: {
+            back: "← Volver",
+            openMaps: "Abrir en Google Maps →",
+            schedule: "Horario de atención",
+            history: "📖 Historia del plato",
+            ingredients: "🥘 Ingredientes",
+            curiosities: "✨ Datos curiosos",
+            reviews: "💬 Lo que opinan los comensales",
+            favorite: "🤍 Guardar para más tarde",
+            removeFavorite: "❤️ Quitar de favoritos",
+            compare: "📊 Comparar con otro",
+            directions: "🗺️ Iniciar ruta",
+            videoNotAvailable: "🎥 Video no disponible",
+            distance: "Distancia",
+            price: "Precio",
+            preparation: "Preparación",
+            flavor: "Sabor",
+            restaurant: "📍 Restaurante"
+        },
+        inglés: {
+            back: "← Back",
+            openMaps: "Open in Google Maps →",
+            schedule: "Opening hours",
+            history: "📖 Dish history",
+            ingredients: "🥘 Ingredients",
+            curiosities: "✨ Fun facts",
+            reviews: "💬 What diners say",
+            favorite: "🤍 Save for later",
+            removeFavorite: "❤️ Remove from favorites",
+            compare: "📊 Compare with another",
+            directions: "🗺️ Get directions",
+            videoNotAvailable: "🎥 Video not available",
+            distance: "Distance",
+            price: "Price",
+            preparation: "Preparation",
+            flavor: "Flavor",
+            restaurant: "📍 Restaurant"
+        }
+    };
+    
+    const t = texts[detailLanguage];
+    if (!t) return;
+    
+    // Botón volver
+    const backBtn = document.getElementById('backBtn');
+    if (backBtn) backBtn.innerHTML = t.back;
+    
+    // Botón del mapa
+    const mapBtn = document.getElementById('openMapsBtn');
+    if (mapBtn) mapBtn.textContent = t.openMaps;
+    
+    // Títulos de secciones
+    const sections = document.querySelectorAll('.section h3');
+    if (sections[0]) sections[0].innerHTML = t.restaurant;
+    if (sections[1]) sections[1].innerHTML = t.history;
+    if (sections[2]) sections[2].innerHTML = t.ingredients;
+    if (sections[3]) sections[3].innerHTML = t.curiosities;
+    if (sections[4]) sections[4].innerHTML = t.reviews;
+    
+    // Etiquetas de info cards
+    const labels = document.querySelectorAll('.info-card .label');
+    if (labels[0]) labels[0].textContent = t.distance;
+    if (labels[1]) labels[1].textContent = t.price;
+    if (labels[2]) labels[2].textContent = t.preparation;
+    if (labels[3]) labels[3].textContent = t.flavor;
+    
+    // Traducir horario si existe
+    const scheduleLabel = document.querySelector('.info-card .label');
+    if (scheduleLabel && scheduleLabel.textContent === 'Horario de atención') {
+        // No hacer nada, ya está
+    }
+    
+    // Botones de acción
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    if (favoriteBtn) {
+        const isFav = favoriteBtn.innerHTML.includes('❤️');
+        if (isFav) {
+            favoriteBtn.innerHTML = t.removeFavorite;
+        } else {
+            favoriteBtn.innerHTML = t.favorite;
+        }
+    }
+    
+    const compareBtn = document.getElementById('compareBtn');
+    if (compareBtn) compareBtn.innerHTML = t.compare;
+    
+    const directionsBtn = document.getElementById('directionsBtn');
+    if (directionsBtn) directionsBtn.innerHTML = t.directions;
+    
+    // Video no disponible
+    const noVideo = document.querySelector('.section small');
+    if (noVideo && noVideo.textContent.includes('Video no')) {
+        noVideo.textContent = t.videoNotAvailable;
+    }
+}
+
+// Esperar a que el contenido se cargue y luego traducir
+setTimeout(() => {
+    loadAndTranslateDetail();
+}, 300);
+    </script>
+</body>
+</html>

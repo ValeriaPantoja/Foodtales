@@ -1,0 +1,161 @@
+// data.js - Base de datos de FoodTales (Actualizado Bogotá)
+
+const platos = [
+    {
+        id: "ajiaco",
+        nombre: "Ajiaco Santafereño",
+        restaurante: "La Puerta Falsa",
+        direccion: "Calle 11 #6-50, Bogotá (La Candelaria)",
+        lat: 4.5981,
+        lng: -74.0758,
+        distancia: 11.5, // km desde Universidad Militar
+        tiempoCaminando: 140, // minutos
+        precio: 25000,
+        moneda: "COP",
+        estrellas: 4.8,
+        sabor: 2,
+        tiempoPreparacion: 45,
+        horarios: "Lun-Dom 11am - 9pm",
+        imagen: "../assets/images/ajiaco.jpg",
+        videoUrl: "https://www.youtube.com/embed/L83EGSgz6n4",
+        historia: "El ajiaco es una sopa tradicional de Bogotá que data de la época precolombina. Se prepara con tres tipos de papas, guascas, pollo y crema de leche.",
+        ingredientes: ["Papa criolla", "Papa sabanera", "Papa pastusa", "Guascas", "Pollo", "Crema de leche", "Alcaparras"],
+        datosCuriosos: ["Se sirve tradicionalmente con aguacate", "Las guascas son una hierba autóctona", "Cada familia tiene su receta secreta"],
+        reviews: [
+            { usuario: "Maria G", estrellas: 5, comentario: "El mejor ajiaco de Bogotá, súper auténtico", fecha: "2024-03-15" },
+            { usuario: "Carlos R", estrellas: 4, comentario: "Muy rico pero un poco caro", fecha: "2024-03-10" },
+            { usuario: "Ana L", estrellas: 5, comentario: "La comida colombiana en su máxima expresión", fecha: "2024-03-05" }
+        ]
+    },
+    {
+        id: "bandeja",
+        nombre: "Bandeja Paisa",
+        restaurante: "El Rancherito",
+        direccion: "Calle 116 #15-20, Bogotá (Usaquén)",
+        lat: 4.7150,
+        lng: -74.0320,
+        distancia: 2.8, // km desde Universidad Militar
+        tiempoCaminando: 35,
+        precio: 42000,
+        moneda: "COP",
+        estrellas: 4.9,
+        sabor: 2,
+        tiempoPreparacion: 35,
+        horarios: "Lun-Dom 12pm - 11pm",
+        imagen: "../assets/images/bandeja-paisa.jpg",
+        videoUrl: "https://www.youtube.com/embed/iYclneyqJ8c",
+        historia: "La bandeja paisa es el plato más representativo de Antioquia. Originalmente era comida de arrieros que necesitaban mucha energía.",
+        ingredientes: ["Frijoles", "Arroz", "Carne molida", "Chicharrón", "Huevo frito", "Plátano maduro", "Arepa", "Aguacate"],
+        datosCuriosos: ["Puede tener más de 1500 calorías", "Originalmente no llevaba huevo frito", "Su nombre viene de la bandeja en que se sirve"],
+        reviews: [
+            { usuario: "Pedro A", estrellas: 5, comentario: "Plato gigante, suficiente para dos personas", fecha: "2024-03-12" },
+            { usuario: "Luisa F", estrellas: 5, comentario: "Delicioso y auténtico", fecha: "2024-03-08" }
+        ]
+    },
+    {
+        id: "arepa",
+        nombre: "Arepa de Huevo",
+        restaurante: "Arepas del Mar",
+        direccion: "Calle 100 #15-30, Bogotá (Chicó)",
+        lat: 4.6980,
+        lng: -74.0450,
+        distancia: 0.9, // km desde Universidad Militar
+        tiempoCaminando: 12,
+        precio: 8000,
+        moneda: "COP",
+        estrellas: 4.6,
+        sabor: 3,
+        tiempoPreparacion: 10,
+        horarios: "Lun-Sab 7am - 6pm",
+        imagen: "../assets/images/arepadehuevo.jpg",
+        videoUrl: "https://www.youtube.com/embed/tCiFPLz6xjE",
+        historia: "La arepa de huevo es originaria de la costa caribe colombiana. Se fríe y se le introduce un huevo crudo que se cocina dentro.",
+        ingredientes: ["Harina de maíz", "Huevo", "Aceite", "Sal"],
+        datosCuriosos: ["Se come caliente recién frita", "Es desayuno típico en Cartagena", "Se acompaña con suero costeño"],
+        reviews: [
+            { usuario: "Sofia M", estrellas: 5, comentario: "Las mejores arepas de mi vida", fecha: "2024-03-14" },
+            { usuario: "Jorge C", estrellas: 4, comentario: "Muy crujientes y sabrosas", fecha: "2024-03-09" }
+        ]
+    },
+    {
+        id: "hamburguesa",
+        nombre: "Hamburguesa Especial",
+        restaurante: "Burger House",
+        direccion: "Calle 85 #12-34, Bogotá (Chicó)",
+        lat: 4.6781,
+        lng: -74.0454,
+        distancia: 4.2, // km desde Universidad Militar
+        tiempoCaminando: 50,
+        precio: 35000,
+        moneda: "COP",
+        estrellas: 4.5,
+        sabor: 5,
+        tiempoPreparacion: 15,
+        horarios: "Mar-Dom 6pm - 12am",
+        imagen: "../assets/images/hamburguesa.jpg",
+        videoUrl: "https://www.youtube.com/embed/A2PwcAUj_bc",
+        historia: "Hamburguesa artesanal con carne de la casa y vegetales frescos.",
+        ingredientes: ["Carne angus", "Queso cheddar", "Lechuga", "Tomate", "Cebolla caramelizada", "Salsa de la casa"],
+        datosCuriosos: ["El pan es horneado diariamente", "La carne es 100% nacional", "Se acompaña con papas a la francesa"],
+        reviews: [
+            { usuario: "Laura P", estrellas: 5, comentario: "La mejor hamburguesa de la zona", fecha: "2024-03-11" }
+        ]
+    },
+    {
+        id: "sancocho",
+        nombre: "Sancocho de Pescado",
+        restaurante: "Sazón Costeño",
+        direccion: "Calle 72 #10-20, Bogotá (Chapinero)",
+        lat: 4.6450,
+        lng: -74.0600,
+        distancia: 6.5, // km desde Universidad Militar
+        tiempoCaminando: 78,
+        precio: 28000,
+        moneda: "COP",
+        estrellas: 4.7,
+        sabor: 2,
+        tiempoPreparacion: 50,
+        horarios: "Lun-Dom 11am - 8pm",
+        imagen: "../assets/images/sancocho.png",
+        videoUrl: "https://www.youtube.com/embed/Qy_2LpEpIPA",
+        historia: "El sancocho de pescado es tradición en la costa colombiana. Se prepara con pescado fresco, yuca, plátano y ñame.",
+        ingredientes: ["Pescado", "Yuca", "Plátano verde", "Ñame", "Cebolla", "Ajo", "Cilantro"],
+        datosCuriosos: ["Se come en reuniones familiares", "El pescado varía según la región", "Se sirve con arroz aparte"],
+        reviews: [
+            { usuario: "Carmen R", estrellas: 5, comentario: "Perfecto para después de la playa", fecha: "2024-03-13" }
+        ]
+    }
+];
+
+// Guardar en localStorage para persistencia
+if (!localStorage.getItem('foodtales_platos')) {
+    localStorage.setItem('foodtales_platos', JSON.stringify(platos));
+}
+
+// Función para obtener platos
+function getPlatos() {
+    return JSON.parse(localStorage.getItem('foodtales_platos')) || platos;
+}
+
+// Función para guardar favoritos
+function getFavoritos() {
+    return JSON.parse(localStorage.getItem('foodtales_favoritos')) || [];
+}
+
+function addFavorito(platoId) {
+    let favoritos = getFavoritos();
+    if (!favoritos.includes(platoId)) {
+        favoritos.push(platoId);
+        localStorage.setItem('foodtales_favoritos', JSON.stringify(favoritos));
+    }
+}
+
+function removeFavorito(platoId) {
+    let favoritos = getFavoritos();
+    favoritos = favoritos.filter(id => id !== platoId);
+    localStorage.setItem('foodtales_favoritos', JSON.stringify(favoritos));
+}
+
+function isFavorito(platoId) {
+    return getFavoritos().includes(platoId);
+}

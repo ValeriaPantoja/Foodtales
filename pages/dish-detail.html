@@ -113,7 +113,7 @@
         }
 
         if (!plato) {
-            document.getElementById('dishContent').innerHTML = '<div style="text-align: center; padding: 3rem;">🍽️ Plato no encontrado<br><button class="map-btn" onclick="window.location.href=\'pages/home.html\'">Volver al inicio</button></div>';
+            document.getElementById('dishContent').innerHTML = '<div style="text-align: center; padding: 3rem;">🍽️ Plato no encontrado<br><button class="map-btn" onclick="window.location.href='../index.html'">Volver al inicio</button></div>';
         } else {
             checkDishAllergies(plato);
         }
@@ -255,7 +255,7 @@
                 checkDishAllergies(plato);
                 // Guardar este plato en localStorage y redirigir a home para elegir segundo
                 localStorage.setItem('foodtales_temp_compare', plato.id);
-                window.location.href = 'pages/home.html?selectCompare=true';
+                window.location.href = '../index.html?selectCompare=true';
             });
         }
         
@@ -263,16 +263,16 @@
         
         // ----- NAVEGACIÓN -----
         document.getElementById('backBtn').addEventListener('click', () => {
-            window.location.href = 'pages/home.html';
+            window.location.href = '../index.html';
         });
         
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const page = btn.getAttribute('data-page');
-                if (page === 'home') window.location.href = 'index.html';
-                else if (page === 'map') window.location.href = 'pages/map.html';
-                else if (page === 'favorites') window.location.href = 'pages/favorites.html';
-                else if (page === 'profile') window.location.href = 'pages/perfil.html';
+                if (page === 'home') window.location.href = '../index.html';
+else if (page === 'map') window.location.href = 'map.html';
+else if (page === 'favorites') window.location.href = 'favorites.html';
+else if (page === 'profile') window.location.href = 'perfil.html';
             });
         });
 // ----- TRADUCCIÓN PARA DETALLE (versión simple que no rompe nada) -----

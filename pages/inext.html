@@ -307,7 +307,7 @@
             const successMsg = currentLanguage === 'español' ? '✅ Cuenta creada. Redirigiendo a editar perfil...' : '✅ Account created. Redirecting to edit profile...';
             showMessage('registerMessage', successMsg, 'success', currentLanguage);
             setTimeout(() => {
-                window.location.href = 'pages/perfil.html';
+                window.location.href = 'perfil.html';
             }, 1500);
         });
 
@@ -335,7 +335,7 @@
             showMessage('loginMessage', successMsg, 'success', currentLanguage);
             
             setTimeout(() => {
-                window.location.href = 'pages/index.html';
+                window.location.href = 'index.html';
             }, 1000);
         });
 

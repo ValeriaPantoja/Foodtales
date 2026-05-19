@@ -373,17 +373,17 @@
         
         // ----- BOTÓN ATRÁS -----
         document.getElementById('backBtn').addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         });
         
         // ----- NAVEGACIÓN UNIFICADA -----
         document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const page = btn.getAttribute('data-page');
-                if (page === 'home') window.location.href = 'index.html';
-                else if (page === 'map') window.location.href = 'pages/map.html';
-                else if (page === 'favorites') window.location.href = 'pages/favorites.html';
-                else if (page === 'profile') window.location.href = 'pages/perfil.html';
+                if (page === 'home') window.location.href = '../index.html';
+else if (page === 'map') window.location.href = 'map.html';
+else if (page === 'favorites') window.location.href = 'favorites.html';
+else if (page === 'profile') window.location.href = 'perfil.html';
             });
         });
     </script>
